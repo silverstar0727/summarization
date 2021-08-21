@@ -1,16 +1,16 @@
 from transformers import pipeline
 from preprocess import *
 
-def main(url, max_length=120, min_length=30):
+def predict(url, max_length=120, min_length=30):
     title, article = text_extraction(url)
     sentences = text_preprocessing(article)
     chunks = make_chunks(sentences)
 
     summarizer = pipeline("summarization")
-    res = summarizer(chunks, max_length=120, min_length=30, do_sample=False)
-    print(f"results: {res}")
+    pred = summarizer(chunks, max_length=120, min_length=30, do_sample=False)
+    print(f"results: {pred}")
 
-    return res
+    return pred
 
 if __name__ == "__main__":    
     import argparse
@@ -20,4 +20,4 @@ if __name__ == "__main__":
     parser.add_argument("--url", help="blog url")
     args = parser.parse_args()
     
-    results = main(args.url)
+    pred = predict(args.url)
