@@ -8,8 +8,9 @@ def main(url, max_length=120, min_length=30):
 
     summarizer = pipeline("summarization")
     res = summarizer(chunks, max_length=120, min_length=30, do_sample=False)
-
     print(f"results: {res}")
+
+    return res
 
 if __name__ == "__main__":    
     import argparse
@@ -18,5 +19,5 @@ if __name__ == "__main__":
 
     parser.add_argument("--url", help="blog url")
     args = parser.parse_args()
-
-    main(args.url)
+    
+    results = main(args.url)
