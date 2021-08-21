@@ -15,7 +15,7 @@ def text_extraction(url):
 
     return title, article
 
-def data_preprocessing(article):
+def text_preprocessing(article):
     # todo: 데이터 전처리 케이스별 정리
     article = article.replace('.', '.<eos>')
     article = article.replace('?', '?<eos>')
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     title, article = text_extraction(args.url)
-    sentences = data_preprocessing(article)
+    sentences = text_preprocessing(article)
     chunks = make_chunks(sentences)
 
     print(f"article 길이: {len(article)}")
