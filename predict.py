@@ -1,7 +1,7 @@
 from transformers import pipeline
-from summarization.preprocess import *
+from preprocess import *
 
-def predict(url, chunk_len=3000):
+def summarizer(url, chunk_len=3000):
     title, text = get_title_and_text(url)
 
     summarizer = pipeline('summarization')
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument("--url", help="blog url")
     args = parser.parse_args()
     
-    summary = predict(args.url)
+    summary = summarizer(args.url)
 
     print(f"results: {summary}")
 
