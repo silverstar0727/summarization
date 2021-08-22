@@ -1,23 +1,27 @@
 from transformers import pipeline
 from preprocess import *
 
-def predict(url, max_length=120, min_length=30):
-    # todo: 한국어 기능 추가
-    title, article = text_extraction(url)
-    sentences = text_preprocessing(article)
-    chunks = make_chunks(sentences)
+def predict(url, chunk_len=3000):
+    title, text = get_title_and_text(url)
 
-    # todo: 모델 저장하고 다시 불러오는 코드로 실행시간 단축하기
-    summarizer = pipeline("summarization")
-    pred = summarizer(chunks, max_length=120, min_length=30, do_sample=False)
+    summarizer = pipeline('summarization')
 
-    summary = " "
-    for sub_text in pred:
-        summary += sub_text['summary_text']    
+    num_iters = int(len(text)/chunk_len)
+    summarized_text = []
 
-    print(f"results: {summary}")
+    for i in range(0, num_iters + 1):
+        start = 0
+        start = i * chunk_len
+        end = (i + 1) * chunk_len
+        try:
+            out = summarizer(text[start:end])
+            out = out[0]
+            out = out['summary_text']
+            summarized_text.append(out)
+        except:
+            pass
 
-    return summary
+    return summarized_text
 
 if __name__ == "__main__":    
     import argparse
@@ -28,6 +32,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     summary = predict(args.url)
-    title, article = text_extraction(args.url)
-    print(f"before summarization: {len(summary)}")
-    print(f"after summarization: {len(article)}")
+
+    print(f"results: {summary}")
+
+    # python summarization.py --url "https://medium.com/tensorflow/using-tensorflow-2-for-state-of-the-art-natural-language-processing-102445cda54a"

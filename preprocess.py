@@ -1,7 +1,24 @@
 from bs4 import BeautifulSoup
 import requests 
+from youtube_transcript_api import YouTubeTranscriptApi
+from pytube import YouTube
 
-def text_extraction(url):
+# input: youtube url -> output: video title, transcript text
+def video_extractor(url):
+    yt = YouTube(url)
+    title = yt.title
+
+    video_id = url.split("=")[1]
+    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
+
+    text = ""
+    for i in transcript:
+        text += ' ' + i['text']
+
+    return title, text
+
+# input: post url -> output: post title, post text
+def post_extractor(url):
     #todo:  medium, github(제목 이슈, 마크다운 수식 이슈), velog, tistory(제목이슈), brunch(공백이슈)
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -11,16 +28,25 @@ def text_extraction(url):
 
     # results = soup.find_all(['h1', 'p])
     text = [result.text for result in results]
-    article = ' '.join(text)
+    text = ' '.join(text)
 
-    return title, article
+    return title, text
 
-def text_preprocessing(article):
+# get title and text from url
+def get_title_and_text(url):
+    if url[:24] == "https://www.youtube.com/":
+        title, text = video_extractor(url)
+    else:
+        title, text = post_extractor(url)
+    
+    return title, text
+
+def text_preprocessing(text):
     # todo: 데이터 전처리 케이스별 정리
-    article = article.replace('.', '.<eos>')
-    article = article.replace('?', '?<eos>')
-    article = article.replace('!', '!<eos>')
-    sentences = article.split('<eos>')
+    text = text.replace('.', '.<eos>')
+    text = text.replace('?', '?<eos>')
+    text = text.replace('!', '!<eos>')
+    sentences = text.split('<eos>')
 
     return sentences
 
@@ -50,9 +76,6 @@ if __name__ == "__main__":
     parser.add_argument("--url", help="blog url")
     args = parser.parse_args()
 
-    title, article = text_extraction(args.url)
-    sentences = text_preprocessing(article)
-    chunks = make_chunks(sentences)
+    title, text = get_title_and_text(args.url)
 
-    print(f"article 길이: {len(article)}")
-    print(f"chunk 길이: {len(chunks)}")
+    print(f"text 길이: {len(text)}")
