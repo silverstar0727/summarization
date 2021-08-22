@@ -1,5 +1,5 @@
 from transformers import pipeline
-from preprocess import *
+from summarization.preprocess import *
 
 def predict(url, chunk_len=3000):
     title, text = get_title_and_text(url)

@@ -3,3 +3,4 @@ requests
 bs4
 youtube_transcript_api
 pytube
+chrome_bookmarks
