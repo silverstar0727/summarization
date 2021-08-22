@@ -1,4 +1,4 @@
-# post or video Summarization
+# posts or videos Summarization
 
 ## Todo List
 #### issue
