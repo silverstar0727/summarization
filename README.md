@@ -1,4 +1,7 @@
-# posts or videos Summarization
+# posts, videos Summarization
+
+## Working Pipeline
+![image](/assets/pipeline.png)
 
 ## Todo List
 #### issue
