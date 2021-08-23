@@ -1,4 +1,4 @@
-from predict import Summarizer
+from Summarizer import Summarizer
 import json
 
 # chrome_bookmarks.folder의 구조는 [1번 폴더 dict, 2번 폴더 dict...]

@@ -19,20 +19,18 @@ class Summarizer():
         if title == "":
             return ""
 
-        num_iters = int(len(text)/chunk_len)
-        summarized_text = []
+        sentences = text_preprocessing(text)
+        chunks = make_chunks(sentences)
 
-        for i in range(0, num_iters + 1):
-            start = 0
-            start = i * chunk_len
-            end = (i + 1) * chunk_len
-            try:
-                out = self.pipeline(text[start:end])
-                out = out[0]
-                out = out['summary_text']
-                summarized_text.append(out)
-            except:
-                pass
+        try:
+            res = self.pipeline(chunks, max_length=50, min_lenth=0)
+
+            summarized_text = ""
+            for i in res:
+                summarized_text += res[0]["summary_text"]
+                
+        except:
+            pass
 
         return summarized_text
 

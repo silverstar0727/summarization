@@ -12,8 +12,11 @@ def video_extractor(url):
     transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
 
     text = ""
-    for i in transcript:
-        text += ' ' + i['text']
+    for sub_script in transcript:
+        text += '. ' + sub_script['text']
+
+    text = text.replace("\xa0", "")
+    text = text.replace("\n", "")
 
     return title, text
 
@@ -53,7 +56,8 @@ def text_preprocessing(text):
 
     return sentences
 
-def make_chunks(sentences, max_chunk=512):
+# 메모리 제한을 피하기 위해서 chunk로 분할
+def make_chunks(sentences, max_chunk=4096):
     current_chunk = 0 
     chunks = []
     for sentence in sentences:
@@ -80,5 +84,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     title, text = get_title_and_text(args.url)
+    sentences = text_preprocessing(text)
+    chunks = make_chunks(sentences)
 
     print(f"text 길이: {len(text)}")
