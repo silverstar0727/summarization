@@ -1,3 +1,5 @@
 __pycache__
 Dockerfile
 README.md
+assets/pipeline.png
+local/local_bookmarks_to_json.py
