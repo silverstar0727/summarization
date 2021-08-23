@@ -7,9 +7,9 @@ def add_prediction(summarizer, children):
         # type이 url일때는 summarization하여 "summary"를 key로 하는 예측 추가
         if children[i]["type"] == "url":
             children[i]["summary"] = summarizer.predict(children[i]["url"])
+            print(f"{children[i]}: {children[i]['summary']}")
             if children[i]["summary"] == "":
                 continue
-            print(f"{children[i]}: {children[i]['summary']}")
 
         # type이 folder일때는 재귀로 하위 항목을 모두 에측하고 그 결과를 children의 i번째에 저장
         else:
@@ -26,10 +26,9 @@ def get_result(summarizer, bookmarks_path="./local/bookmarks.json"):
 
     return result
 
-def result_2_json(result, result_path):
+def result_2_json(result, result_path="./"):
     with open(result_path, "w") as f:
         json.dump(result, f)
-
 
 if __name__ == "__main__":
     import argparse
@@ -42,3 +41,4 @@ if __name__ == "__main__":
     summarizer = Summarizer("t5-large")
     summarizer.get_model()
     result = get_result(summarizer, args.bookmarks_path)
+    result_2_json()
