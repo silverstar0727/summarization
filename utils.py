@@ -62,7 +62,7 @@ def text_preprocessing(text):
     return sentences
 
 # 메모리 제한을 피하기 위해서 chunk로 분할
-def make_chunks(sentences, max_chunk=512):
+def make_chunks(sentences, max_chunk=500):
     current_chunk = 0 
     chunks = []
     for sentence in sentences:
