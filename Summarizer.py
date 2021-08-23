@@ -44,5 +44,3 @@ if __name__ == "__main__":
     summary = summarizer.predict(args.url)
 
     print(f"results: {summary}")
-
-    # python summarization.py --url "https://medium.com/tensorflow/using-tensorflow-2-for-state-of-the-art-natural-language-processing-102445cda54a"
