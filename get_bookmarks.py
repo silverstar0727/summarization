@@ -7,6 +7,8 @@ def add_prediction(summarizer, children):
         # type이 url일때는 summarization하여 "summary"를 key로 하는 예측 추가
         if children[i]["type"] == "url":
             children[i]["summary"] = summarizer.predict(children[i]["url"])
+            if children[i]["summary"] == "":
+                continue
             print(f"{children[i]}: {children[i]['summary']}")
 
         # type이 folder일때는 재귀로 하위 항목을 모두 에측하고 그 결과를 children의 i번째에 저장

@@ -36,7 +36,7 @@ def post_extractor(url):
 def get_title_and_text(url):
     if url[:24] == "https://www.youtube.com/":
         title, text = video_extractor(url)
-    else:
+    elif url[:19] == "https://medium.com/" or "tistory.com" in url:
         title, text = post_extractor(url)
     
     return title, text

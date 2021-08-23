@@ -16,6 +16,8 @@ class Summarizer():
 
     def predict(self, url, chunk_len=3000):
         title, text = get_title_and_text(url)
+        if title == "":
+            return ""
 
         num_iters = int(len(text)/chunk_len)
         summarized_text = []
