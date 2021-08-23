@@ -2,7 +2,7 @@ from transformers import (T5ForConditionalGeneration,
                           T5TokenizerFast as T5Tokenizer,
                           pipeline)
 
-from preprocess import *
+from utils import *
 
 class Summarizer():
     def __init__(self, model_name):
@@ -13,26 +13,23 @@ class Summarizer():
         tokenizer = T5Tokenizer.from_pretrained(self.model_name)
 
         self.pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
+        print("success load model")
 
-    def predict(self, url, chunk_len=3000):
+    def predict(self, url):
         title, text = get_title_and_text(url)
         if title == "":
             return ""
 
-        sentences = text_preprocessing(text)
-        chunks = make_chunks(sentences)
-
         try:
-            res = self.pipeline(chunks, max_length=50, min_lenth=0)
+            summary = text2chunk_and_pred(text, self.pipeline, 64, 16)
+            if len(text) > 10000:
+                print("텍스트가 너무 길어, 요약을 한번 더 진행합니다.")
+                summary = text2chunk_and_pred(summary, self.pipeline, 128, 32)
+            return summary
 
-            summarized_text = ""
-            for i in res:
-                summarized_text += res[0]["summary_text"]
-                
         except:
-            pass
+            return ""
 
-        return summarized_text
 
 if __name__ == "__main__":    
     import argparse
