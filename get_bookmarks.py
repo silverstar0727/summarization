@@ -24,6 +24,10 @@ def get_result(summarizer, bookmarks_path="./local/bookmarks.json"):
 
     return result
 
+def result_2_json(result, result_path):
+    with open(result_path, "w") as f:
+        json.dump(result, f)
+
 if __name__ == "__main__":
     summarizer = Summarizer("t5-large")
     summarizer.get_model()
