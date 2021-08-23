@@ -1,6 +1,6 @@
 # posts, videos Summarization
 
-## Working Pipeline
+## Workflow
 ![image](/assets/pipeline.png)
 
 ## Todo List
