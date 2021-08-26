@@ -10,10 +10,12 @@ class Summarizer():
 
     def get_model(self, language):
         self.ko_pipeline = Pororo(task="summarization", model="abstractive", lang="ko")
+        print("한국어 모델 로드 완료")
     
         model = T5ForConditionalGeneration.from_pretrained(self.model_name)
         tokenizer = T5Tokenizer.from_pretrained(self.model_name)
         self.en_pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
+        print("영어 모델 로드 완료")
 
     def predict(self, url):
         title, text = get_title_and_text(url)

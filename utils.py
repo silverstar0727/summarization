@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests 
 from youtube_transcript_api import YouTubeTranscriptApi
 from pytube import YouTube
+import transformers
 
 # input: youtube url -> output: video title, transcript text
 def video_extractor(url):
@@ -80,7 +81,7 @@ def make_chunks(sentences, max_chunk=500):
 
     return chunks
 
-def text2chunk_and_pred(text, summarizer, max_length, min_length):
+def text2chunk_and_pred(text, summarizer, use_chunks, max_length, min_length, language):
     sentences = text_preprocessing(text)
     chunks = make_chunks(sentences)
 
@@ -91,7 +92,10 @@ def text2chunk_and_pred(text, summarizer, max_length, min_length):
     summary = ""
     for i in range(len(chunks)):
         res = summarizer(chunks[i], max_length=max_length, min_length=min_length, do_sample=False)
-        summary += res[0]["summary_text"]
+        if type(summarizer) == transformers.pipelines.text2text_generation.SummarizationPipeline:
+            summary += res[0]["summary_text"]
+        else:
+            summary += res
 
     return summary
 
