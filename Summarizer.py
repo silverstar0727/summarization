@@ -34,7 +34,7 @@ class Summarizer():
             short_summary = text2chunk_and_pred(text, self.pipeline, 64, 16)
             if len(text) > 10000:
                 print("텍스트가 너무 길어, 요약을 한번 더 진행합니다.")
-                long_summary = text2chunk_and_pred(summary, self.pipeline, 128, 32)
+                long_summary = text2chunk_and_pred(short_summary, self.pipeline, 128, 32)
             return short_summary, long_summary
 
         except:
