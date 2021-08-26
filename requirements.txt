@@ -5,3 +5,5 @@ youtube_transcript_api
 pytube
 chrome_bookmarks
 torch
+pororo
+sentencepiece

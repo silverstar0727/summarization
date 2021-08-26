@@ -6,11 +6,11 @@ def add_prediction(summarizer, children):
     for i in range(len(children)):
         # type이 url일때는 summarization하여 "summary"를 key로 하는 예측 추가
         if children[i]["type"] == "url":
-            children[i]["summary"] = summarizer.predict(children[i]["url"])
+            short, long = summarizer.predict(children[i]["url"])
+            children[i]["short_summary"], children[i]["long_summary"] = short, long
             print(children[i]["url"])
-            print(children[i]['summary'])
 
-            if children[i]["summary"] == "":
+            if short == "":
                 continue
 
         # type이 folder일때는 재귀로 하위 항목을 모두 에측하고 그 결과를 children의 i번째에 저장
@@ -33,7 +33,7 @@ def result_2_json(result, result_path="./result.json"):
         json.dump(result, f)
 
 if __name__ == "__main__":
-    summarizer = Summarizer("t5-large")
+    summarizer = Summarizer("t5-large", "en")
     summarizer.get_model()
     result = get_result(summarizer)
     result_2_json(result)

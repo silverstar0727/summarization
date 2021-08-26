@@ -1,31 +1,39 @@
 from transformers import (T5ForConditionalGeneration, 
                           T5TokenizerFast as T5Tokenizer,
                           pipeline)
-
+from pororo import Pororo
 from utils import *
 
 class Summarizer():
     def __init__(self, model_name):
         self.model_name = model_name
 
-    def get_model(self):
+    def get_model(self, language):
+        self.ko_pipeline = Pororo(task="summarization", model="abstractive", lang="ko")
+    
         model = T5ForConditionalGeneration.from_pretrained(self.model_name)
         tokenizer = T5Tokenizer.from_pretrained(self.model_name)
-
-        self.pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
-        print("success load model")
+        self.en_pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
 
     def predict(self, url):
         title, text = get_title_and_text(url)
         if title == "":
             return ""
 
+        # 만약 텍스트가 영어면 
+        if language == "en":
+            self.pipeline = self.en_pipeline
+        else:
+            self.pipeline = self.ko_pipeline
+
+        short_summary = ""
+        long_summary = ""
         try:
-            summary = text2chunk_and_pred(text, self.pipeline, 64, 16)
+            short_summary = text2chunk_and_pred(text, self.pipeline, 64, 16)
             if len(text) > 10000:
                 print("텍스트가 너무 길어, 요약을 한번 더 진행합니다.")
-                summary = text2chunk_and_pred(summary, self.pipeline, 128, 32)
-            return summary
+                long_summary = text2chunk_and_pred(summary, self.pipeline, 128, 32)
+            return short_summary, long_summary
 
         except:
             return ""
