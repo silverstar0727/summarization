@@ -27,8 +27,6 @@ class Summarizer():
         else:
             self.pipeline = self.ko_pipeline
 
-        short_summary = ""
-        long_summary = ""
         try:
             short_summary = text2chunk_and_pred(text, self.pipeline, 64, 16)
             if len(text) > 10000:
@@ -37,7 +35,7 @@ class Summarizer():
             return short_summary, long_summary
 
         except:
-            return ""
+            return "", ""
 
 
 if __name__ == "__main__":    
