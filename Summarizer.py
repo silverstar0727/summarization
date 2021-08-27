@@ -18,8 +18,8 @@ class Summarizer():
         print("영어 모델 로드 완료")
 
     def predict(self, url):
-        title, text = get_title_and_text(url)
-        if title == "":
+        text = get_text(url)
+        if text == "":
             return ""
 
         # 만약 텍스트가 영어면 

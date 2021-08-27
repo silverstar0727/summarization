@@ -1,20 +1,16 @@
 from bs4 import BeautifulSoup
 import requests 
 from youtube_transcript_api import YouTubeTranscriptApi
-from pytube import YouTube
 import transformers
 import re
 
-# input: youtube url -> output: video title, transcript text
+# input: youtube url -> output: transcript text
 def video_extractor(url):
-    yt = YouTube(url)
-    title = yt.title
-
     video_id = url.split("=")[1]
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
     except:
-        return "", ""
+        return ""
 
     text = ""
     for i in range(0, len(transcript), 1):
@@ -23,34 +19,32 @@ def video_extractor(url):
         else:
             text += ' ' + transcript[i]['text']
 
-    return title, text
+    return text
 
-# input: post url -> output: post title, post text
+# input: post url -> output: post text
 def post_extractor(url):
     #todo:  medium, github(제목 이슈, 마크다운 수식 이슈), velog, tistory(제목이슈), brunch(공백이슈)
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
 
-    title = soup.find_all('h1')[0].text
     results = soup.find_all(['p'])
 
     # results = soup.find_all(['h1', 'p])
     text = [result.text for result in results]
     text = ' '.join(text)
 
-    return title, text
+    return text
 
-# get title and text from url
-def get_title_and_text(url):
+# get text from url
+def get_text(url):
     if url[:24] == "https://www.youtube.com/":
-        title, text = video_extractor(url)
+        text = video_extractor(url)
     elif ("https://medium.com/" in url) or ("tistory.com" in url) or ("https://brunch.co.kr/" in url):
-        title, text = post_extractor(url)
+        text = post_extractor(url)
     else:
-        title = ""
         text = ""
     
-    return title, text
+    return text
 
 def text_preprocessing(text):
     # todo: 데이터 전처리 케이스별 정리
@@ -113,7 +107,7 @@ if __name__ == "__main__":
     parser.add_argument("--url", help="blog url")
     args = parser.parse_args()
 
-    title, text = get_title_and_text(args.url)
+    text = get_text(args.url)
     sentences = text_preprocessing(text)
     chunks = make_chunks(sentences)
 
