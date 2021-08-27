@@ -33,7 +33,7 @@ def result_2_json(result, result_path="./result.json"):
         json.dump(result, f)
 
 if __name__ == "__main__":
-    summarizer = Summarizer("t5-large", "en")
+    summarizer = Summarizer("t5-large")
     summarizer.get_model()
     result = get_result(summarizer)
     result_2_json(result)

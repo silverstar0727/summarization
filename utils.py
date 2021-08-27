@@ -99,6 +99,11 @@ def text2chunk_and_pred(text, summarizer, use_chunks, max_length, min_length, la
 
     return summary
 
+def isKorean(text):
+    hangul = re.compile('[\u3131-\u3163\uac00-\ud7a3]+')  
+    result = hangul.findall(text)
+    return len(result)
+
 if __name__ == "__main__":
     import argparse
 
