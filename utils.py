@@ -76,7 +76,7 @@ def make_chunks(sentences, max_chunk=500):
 
     return chunks
 
-def text2chunk_and_pred(text, summarizer, use_chunks, max_length, min_length, language):
+def text2chunk_and_pred(text, summarizer, max_length, min_length):
     sentences = text_preprocessing(text)
     chunks = make_chunks(sentences)
 

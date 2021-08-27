@@ -27,6 +27,8 @@ class Summarizer():
         else:
             self.pipeline = self.ko_pipeline
 
+        short_summary = ""
+        long_summary = ""
         try:
             short_summary = text2chunk_and_pred(text, self.pipeline, 64, 16)
             if len(text) > 10000:
@@ -35,7 +37,7 @@ class Summarizer():
             return short_summary, long_summary
 
         except:
-            return "", ""
+            return short_summary, long_summary
 
 
 if __name__ == "__main__":    
@@ -47,6 +49,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     summarizer = Summarizer("t5-large")
-    summary = summarizer.predict(args.url)
+    short_summ, long_summ = summarizer.predict(args.url)
 
-    print(f"results: {summary}")
+    print(f"results")
+    print(short_summ)
+    print(long_summ)

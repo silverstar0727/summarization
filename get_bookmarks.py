@@ -6,11 +6,11 @@ def add_prediction(summarizer, children):
     for i in range(len(children)):
         # type이 url일때는 summarization하여 "summary"를 key로 하는 예측 추가
         if children[i]["type"] == "url":
-            short, long = summarizer.predict(children[i]["url"])
-            children[i]["short_summary"], children[i]["long_summary"] = short, long
+            short_sum, long_sum = summarizer.predict(children[i]["url"])
+            children[i]["short_summary"], children[i]["long_summary"] = short_sum, long_sum
             print(children[i]["url"])
 
-            if short == "":
+            if long_sum == "":
                 continue
 
         # type이 folder일때는 재귀로 하위 항목을 모두 에측하고 그 결과를 children의 i번째에 저장
