@@ -99,6 +99,7 @@ def isKorean(text):
     result = hangul.findall(text)
     return len(result)
 
+
 if __name__ == "__main__":
     import argparse
 

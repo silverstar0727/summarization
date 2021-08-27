@@ -19,7 +19,7 @@ class Summarizer():
     def predict(self, url):
         text = get_text(url)
         if text == "":
-            return ""
+            return "", ""
 
         # 만약 텍스트가 영어면 
         if isKorean(text) == 0:
