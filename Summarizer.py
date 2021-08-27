@@ -5,15 +5,14 @@ from pororo import Pororo
 from utils import *
 
 class Summarizer():
-    def __init__(self, model_name):
-        self.model_name = model_name
+    def __init__(self, en_model_name="t5-large"):
+        self.en_model_name = en_model_name
 
-    def get_model(self):
         self.ko_pipeline = Pororo(task="summarization", model="abstractive", lang="ko")
         print("한국어 모델 로드 완료")
     
-        model = T5ForConditionalGeneration.from_pretrained(self.model_name)
-        tokenizer = T5Tokenizer.from_pretrained(self.model_name)
+        model = T5ForConditionalGeneration.from_pretrained(self.en_model_name)
+        tokenizer = T5Tokenizer.from_pretrained(self.en_model_name)
         self.en_pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
         print("영어 모델 로드 완료")
 
@@ -50,7 +49,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     summarizer = Summarizer("t5-large")
-    summarizer.get_model()
     summary = summarizer.predict(args.url)
 
     print(f"results: {summary}")
