@@ -3,6 +3,7 @@ import requests
 from youtube_transcript_api import YouTubeTranscriptApi
 from pytube import YouTube
 import transformers
+import re
 
 # input: youtube url -> output: video title, transcript text
 def video_extractor(url):
