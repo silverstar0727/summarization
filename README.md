@@ -15,3 +15,4 @@
 - [x] 모델 최대 길이 조정 
 - [ ] colab memory [#1](https://github.com/silverstar0727/summarization/issues/1)
 - [ ] 한국어 모델 proro, huggingface 선택 가능하도록 Summarizer의 init에 추가
+- [ ] colab install [#2](https://github.com/silverstar0727/summarization/issues/1)
