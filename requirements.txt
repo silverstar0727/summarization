@@ -1,8 +1,8 @@
-transformers
-requests
-bs4
+transformers==4.9.2
+requests==2.26.0
+bs4==4.9.3
 youtube_transcript_api
 chrome_bookmarks
-torch
-pororo
+torch==1.8.0
+pororo==0.4.0
 sentencepiece
