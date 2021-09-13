@@ -6,40 +6,60 @@ import re
 
 # input: youtube url -> output: transcript text
 def video_extractor(url):
-    video_id = url.split("=")[1]
+    """
+    Args: url(String)
+    Return: text(String)
+
+    유튜브 포맷의 url 주소를 받아서 자막을 추출하는 함수입니다.
+    자막은 한국어를 우선으로 하고 한국어가 없으면 영어를 추출합니다.
+    """
+    video_id = url.split("=")[1] # 고유의 video id를 url에서 찾습니다.
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
+        # youtube_transcript_api를 활용하였습니다.
+        # 고유의 video_id를 넣고 아래의 dictionary의 나열한 list형태로 자막을 반환합니다.
+        # caption = [{"duration": ~, "start": ~, "text": ~}, ...]
+        # https://github.com/jdepoix/youtube-transcript-api
+        caption = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
     except:
+        # 자막이 존재하지 않을 경우 빈 string을 반환합니다.
         return ""
 
     text = ""
-    for i in range(0, len(transcript), 1):
+    for i in range(0, len(caption), 1):
         if i % 2 == 1:
-            text += '. ' + transcript[i]['text']
+            text += '. ' + caption[i]['text']
         else:
-            text += ' ' + transcript[i]['text']
+            text += ' ' + caption[i]['text']
 
     return text
 
-# input: post url -> output: post text
 def post_extractor(url):
-    #todo:  medium, github(제목 이슈, 마크다운 수식 이슈), velog, tistory(제목이슈), brunch(공백이슈)
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
+    """
+    Args: post url(String)
+    Output: post text(String)
+    """
 
-    results = soup.find_all(['p'])
+    #todo:  medium, github(제목, 마크다운 수식), velog, tistory(제목), brunch(공백) 이슈들 수정하기
+    r = requests.get(url) # http로 url에 해당하는 request를 받습니다.
+    soup = BeautifulSoup(r.text, 'html.parser') # BeautifulSoup으로 html정보를 파싱합니다.
+
+    results = soup.find_all(['p']) # p 태그가 붙어있는 부분을 list형태로 results에 저장합니다.
 
     # results = soup.find_all(['h1', 'p])
-    text = [result.text for result in results]
-    text = ' '.join(text)
+    text_list = [result.text for result in results] # text부분 만을 list로 만듭니다.
+    text = ' '.join(text_list)
 
     return text
 
-# get text from url
 def get_text(url):
+    """
+    Args: url(String)
+    Ouptut: youtube cation or post text(String)
+    """
     if url[:24] == "https://www.youtube.com/":
         text = video_extractor(url)
     elif ("https://medium.com/" in url) or ("tistory.com" in url) or ("https://brunch.co.kr/" in url):
+        # todo: 다양한 블로그 사이트 추가하기
         text = post_extractor(url)
     else:
         text = ""
@@ -47,6 +67,10 @@ def get_text(url):
     return text
 
 def text_preprocessing(text):
+    """
+    Args: raw text(String)
+    Output: preprocessed sentences(List)
+    """
     # todo: 데이터 전처리 케이스별 정리
     text = text.replace('.', '.<eos>')
     text = text.replace('?', '?<eos>')
@@ -59,14 +83,20 @@ def text_preprocessing(text):
 
 # 메모리 제한을 피하기 위해서 chunk로 분할
 def make_chunks(sentences, max_chunk=500):
+    """
+    Args: sentences(String), max_chunk(Int)
+    Output: chunks(List)
+    """
     current_chunk = 0 
     chunks = []
-    for sentence in sentences:
-        if len(chunks) == current_chunk + 1: 
+    for sentence in sentences: # 개별 문장을 하나씩 진행
+        if len(chunks) == current_chunk + 1: # 
             if len(chunks[current_chunk]) + len(sentence.split(' ')) <= max_chunk:
                 chunks[current_chunk].extend(sentence.split(' '))
             else:
                 current_chunk += 1
+                
+                # sentence를 단어단위로 분할해서 하나의 리스트로 만들고 chunks에 추가
                 chunks.append(sentence.split(' '))
         else:
             chunks.append(sentence.split(' '))
