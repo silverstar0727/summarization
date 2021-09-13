@@ -4,11 +4,12 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import transformers
 import re
 
-# input: youtube url -> output: transcript text
 def video_extractor(url):
     """
-    Args: url(String)
-    Return: text(String)
+    Args: 
+        - url(String)
+    Return: 
+        - text(String)
 
     유튜브 포맷의 url 주소를 받아서 자막을 추출하는 함수입니다.
     자막은 한국어를 우선으로 하고 한국어가 없으면 영어를 추출합니다.
@@ -35,8 +36,10 @@ def video_extractor(url):
 
 def post_extractor(url):
     """
-    Args: post url(String)
-    Output: post text(String)
+    Args: 
+        - post url(String)
+    Output: 
+        - post text(String)
     """
 
     #todo:  medium, github(제목, 마크다운 수식), velog, tistory(제목), brunch(공백) 이슈들 수정하기
@@ -53,8 +56,10 @@ def post_extractor(url):
 
 def get_text(url):
     """
-    Args: url(String)
-    Ouptut: youtube cation or post text(String)
+    Args: 
+        - url(String)
+    Ouptut: 
+        - youtube cation or post text(String)
     """
     if url[:24] == "https://www.youtube.com/":
         text = video_extractor(url)
@@ -68,8 +73,10 @@ def get_text(url):
 
 def text_preprocessing(text):
     """
-    Args: raw text(String)
-    Output: preprocessed sentences(List)
+    Args: 
+        - raw text(String)
+    Output: 
+        - preprocessed sentences(List)
     """
     # todo: 데이터 전처리 케이스별 정리
     text = text.replace('.', '.<eos>')
@@ -81,32 +88,51 @@ def text_preprocessing(text):
 
     return sentences
 
-# 메모리 제한을 피하기 위해서 chunk로 분할
 def make_chunks(sentences, max_chunk=500):
     """
-    Args: sentences(String), max_chunk(Int)
-    Output: chunks(List)
+    Args: 
+        - sentences(String)
+        - max_chunk(Int)
+    Output: 
+        - chunks(List)
+
+    메모리 제한을 피하기 위해서 chunk로 분할
     """
     current_chunk = 0 
     chunks = []
     for sentence in sentences: # 개별 문장을 하나씩 진행
-        if len(chunks) == current_chunk + 1: # 
+
+        if len(chunks) == current_chunk + 1:
+            # 두번째 반복부터
+
             if len(chunks[current_chunk]) + len(sentence.split(' ')) <= max_chunk:
+                # 새로운 길이를 추가해도 max_chunk보다 작을 경우에 단어 단위로 추가
                 chunks[current_chunk].extend(sentence.split(' '))
             else:
-                current_chunk += 1
-                
                 # sentence를 단어단위로 분할해서 하나의 리스트로 만들고 chunks에 추가
                 chunks.append(sentence.split(' '))
+                # 다음 카운트
+                current_chunk += 1
         else:
+            # 첫번째 반복일때
+            # 문장을 단어단위로 분할해서 새로운 chunk에 추가
             chunks.append(sentence.split(' '))
 
     for chunk_id in range(len(chunks)):
-        chunks[chunk_id] = ' '.join(chunks[chunk_id])
+        chunks[chunk_id] = ' '.join(chunks[chunk_id]) # 공백을 기준으로 모두 합치기
 
     return chunks
 
 def text2chunk_and_pred(text, summarizer, max_length, min_length):
+    """
+    Args: 
+        - text(String)
+        - summarizer(Summarizer)
+        - max_length(Int)
+        - min_length(Int)
+    Output:
+        - summary(String)
+    """
     sentences = text_preprocessing(text)
     chunks = make_chunks(sentences)
 
@@ -125,6 +151,12 @@ def text2chunk_and_pred(text, summarizer, max_length, min_length):
     return summary
 
 def isKorean(text):
+    """
+    Args:
+        - text(String)
+    Output:
+        - len(results) (int): 한글의 개수
+    """
     hangul = re.compile('[\u3131-\u3163\uac00-\ud7a3]+')  
     result = hangul.findall(text)
     return len(result)
