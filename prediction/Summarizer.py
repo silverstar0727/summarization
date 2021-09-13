@@ -5,6 +5,9 @@ from pororo import Pororo
 from utils import *
 
 class Summarizer():
+    """
+    
+    """
     def __init__(self, en_model_name="t5-large"):
         self.en_model_name = en_model_name
 
