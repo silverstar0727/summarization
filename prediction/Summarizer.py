@@ -6,25 +6,38 @@ from utils import *
 
 class Summarizer():
     """
+    summarization을 얻을 수 있습니다.
+
+    Args: 
+        - en_model_name(String) = "t5-large"
     
+    Usage:
+        url = "https:// ~~~"
+        summarizer = Summarizer("t5-large")
+        short_summ, long_summ = summarizer.predict(url)
     """
+    
     def __init__(self, en_model_name="t5-large"):
         self.en_model_name = en_model_name
 
+        # 한국에 모델을 로드합니다.
         self.ko_pipeline = Pororo(task="summarization", model="abstractive", lang="ko")
         print("한국어 모델 로드 완료")
     
+        # 영어 모델을 로드합니다.
         model = T5ForConditionalGeneration.from_pretrained(self.en_model_name)
         tokenizer = T5Tokenizer.from_pretrained(self.en_model_name)
         self.en_pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
         print("영어 모델 로드 완료")
 
     def predict(self, url):
+        # 텍스트를 얻습니다.
+        # (이것보다 한국어를 판단하기에 나은코드가 있으려나... 같은 일을 두번하게 되는 부분)
         text = get_text(url)
         if text == "":
             return "", ""
 
-        # 만약 텍스트가 영어면 
+        # 텍스트의 종류에 따라서 한국어와 영어 모델을 선택합니다.
         if isKorean(text) == 0:
             self.pipeline = self.en_pipeline
         else:
