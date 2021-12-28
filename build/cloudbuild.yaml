@@ -1,0 +1,25 @@
+steps:
+- name: 'gcr.io/cloud-builders/git'
+  args: ['clone', 'https://github.com/silverstar0727/summarization',
+         '--verbose']
+  id: 'Clone Repository'
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'silverstar456/summarization:prediction', '.']
+  dir: 'prediction'
+  id: 'build prediction'
+  waitFor: ['Clone Repository']
+  
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'silverstar456/summarization:tfdv', '.']
+  dir: 'tfdv'
+  id: 'data validation'
+  waitFor: ['Clone Repository']
+  
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'silverstar456/summarization:train', '.']
+  dir: 'train'
+  id: 'fine tuning'
+  waitFor: ['Clone Repository']
+
+images: ['silverstar456/summarization:prediction', 'silverstar456/summarization:tfdv' , 'silverstar456/summarization:train']
