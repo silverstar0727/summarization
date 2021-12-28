@@ -17,7 +17,12 @@ class Summarizer():
         short_summ, long_summ = summarizer.predict(url)
     """
     
-    def __init__(self, en_model_name="t5-large"):
+    def __init__(
+        self, 
+        use_custom_model=False, 
+        en_model_name="t5-large",
+        gcs_model_dir,
+    ):
         self.en_model_name = en_model_name
 
         # 한국에 모델을 로드합니다.
@@ -25,10 +30,15 @@ class Summarizer():
         print("한국어 모델 로드 완료")
     
         # 영어 모델을 로드합니다.
-        model = T5ForConditionalGeneration.from_pretrained(self.en_model_name)
-        tokenizer = T5Tokenizer.from_pretrained(self.en_model_name)
-        self.en_pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
-        print("영어 모델 로드 완료")
+        if use_custom_model == False:
+            model = T5ForConditionalGeneration.from_pretrained(self.en_model_name)
+            tokenizer = T5Tokenizer.from_pretrained(self.en_model_name)
+            self.en_pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
+            print("영어 모델 로드 완료")
+        else:
+            model = T5ForConditionalGeneration.from_pretrained(gcs_model_dir)
+            tokenizer = T5Tokenizer.from_pretrained(gcs_model_dir)
+            self.en_pipeline = pipeline("summarization", model=model, tokenizer=tokenizer)
 
     def predict(self, url):
         # 텍스트를 얻습니다.
